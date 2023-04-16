@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Data\Multitenancy.Data.Master\Multitenancy.Data.Master.csproj" />
+    <ProjectReference Include="..\Data\Multitenancy.Data.Tenant\Multitenancy.Data.Tenant.csproj" />
+  </ItemGroup>
+
+</Project>
