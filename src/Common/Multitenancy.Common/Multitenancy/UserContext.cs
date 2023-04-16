@@ -12,5 +12,10 @@
             UserId = userId;
             ConnectionString = connectionString;
         }
+
+        public void SetConnectionString(string connectionString)
+        {
+            ConnectionString = connectionString;
+        }
     }
 }

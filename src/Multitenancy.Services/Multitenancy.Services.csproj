@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Common\Multitenancy.Common\Multitenancy.Common.csproj" />
     <ProjectReference Include="..\Data\Multitenancy.Data.Master\Multitenancy.Data.Master.csproj" />
     <ProjectReference Include="..\Data\Multitenancy.Data.Tenant\Multitenancy.Data.Tenant.csproj" />
   </ItemGroup>

@@ -18,7 +18,7 @@ namespace Plat.Analytics.Data.Tenant
             _userContext = userContext;
         }
 
-        public virtual DbSet<Invoice> Comments { get; set; } = null!;
+        public virtual DbSet<Invoice> Invoices { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

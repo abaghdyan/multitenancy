@@ -1,3 +1,5 @@
+using Multitenancy.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -8,6 +10,9 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+await app.Services.MigrateMasterDbContextAsync();
+await app.Services.MigrateTenantDbContextsAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
