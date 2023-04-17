@@ -1,10 +1,9 @@
-﻿namespace Plat.Analytics.Services.Options
-{
-    public class MasterDbOptions
-    {
-        public const string Section = "MasterDb";
+﻿namespace Multitenancy.Services.Options;
 
-        public string ConnectionString { get; set; }
-        public string EncryptionKey { get; set; }
-    }
+public class MasterDbOptions
+{
+    public const string Section = "MasterDb";
+
+    public string ConnectionString { get; set; } = null!;
+    public string EncryptionKey { get; set; } = null!;
 }

@@ -7,13 +7,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{D366D3F1-BAF
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multitenancy.Api", "src\Multitenancy.Api\Multitenancy.Api.csproj", "{7D4FB613-01C8-4D94-9D17-D0A5CCF3EEB4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multitenancy.Services", "src\Multitenancy.Services\Multitenancy.Services.csproj", "{A80AD294-8D34-404A-B274-568062575020}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multitenancy.Services", "src\Multitenancy.Services\Multitenancy.Services.csproj", "{A80AD294-8D34-404A-B274-568062575020}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{589A9539-56BC-496E-B3CF-89B07A2D77C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multitenancy.Api.UnitTests", "tests\Multitenancy.Api.UnitTests\Multitenancy.Api.UnitTests.csproj", "{F1923CEC-D6E2-47F2-A1A2-C497BE974A12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multitenancy.Api.UnitTests", "tests\Multitenancy.Api.UnitTests\Multitenancy.Api.UnitTests.csproj", "{F1923CEC-D6E2-47F2-A1A2-C497BE974A12}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Multitenancy.Api.IntegrationTests", "tests\Multitenancy.Api.IntegrationTests\Multitenancy.Api.IntegrationTests.csproj", "{2CC88EE1-102A-4C43-BCB3-B7FC888AD239}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Multitenancy.Api.IntegrationTests", "tests\Multitenancy.Api.IntegrationTests\Multitenancy.Api.IntegrationTests.csproj", "{2CC88EE1-102A-4C43-BCB3-B7FC888AD239}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{76647FF3-F2B5-4FE5-87DE-BD463DAB1007}"
 EndProject

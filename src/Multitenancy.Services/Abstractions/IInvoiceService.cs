@@ -1,9 +1,9 @@
-﻿using Multitenancy.Data.Tenant.Entities;
+﻿using Multitenancy.Data.Master.Entities;
 
-namespace Multitenancy.Services.Abstractions
+namespace Multitenancy.Services.Abstractions;
+
+public interface IInvoiceService
 {
-    public interface IInvoiceService
-    {
-        Task<List<Invoice>> GetInvoices();
-    }
+    Task<List<Invoice>> GetInvoicesAsync();
+    Task<Invoice?> GetInvoiceByIdAsync(int id);
 }

@@ -2,54 +2,51 @@
 using Microsoft.EntityFrameworkCore.Query;
 using Multitenancy.Common.Multitenancy;
 using Multitenancy.Data.Tenant.Entities;
-using Plat.Analytics.Common;
 using System.Linq.Expressions;
 
-namespace Plat.Analytics.Data.Tenant
+namespace Multitenancy.Data.Tenant;
+
+public partial class TenantDbContext : DbContext
 {
-    public partial class TenantDbContext : DbContext
+    private readonly UserContext _userContext;
+
+    public TenantDbContext(DbContextOptions<TenantDbContext> options,
+        UserContext userContext)
+        : base(options)
     {
-        private readonly UserContext _userContext;
+        _userContext = userContext;
+    }
 
-        public TenantDbContext(DbContextOptions<TenantDbContext> options,
-            UserContext userContext)
-            : base(options)
+    public virtual DbSet<Book> Books { get; set; } = null!;
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
         {
-            _userContext = userContext;
-        }
-
-        public virtual DbSet<Invoice> Invoices { get; set; } = null!;
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
+            if (!string.IsNullOrEmpty(_userContext.ConnectionString))
             {
-                if (!string.IsNullOrEmpty(_userContext.ConnectionString))
-                {
-                    optionsBuilder.UseSqlServer(_userContext.ConnectionString);
-                }
-                else
-                {
-                    throw new InvalidOperationException("Tenant related database connection string was not initialized");
-                }
+                optionsBuilder.UseSqlServer(_userContext.ConnectionString);
+            }
+            else
+            {
+                throw new InvalidOperationException("Tenant related database connection string was not initialized");
             }
         }
+    }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // Setting global query filter for TenantId property
+        Expression<Func<IHasTenantId, bool>> filterExpr = e => e.TenantId == _userContext.TenantId;
+        foreach (var mutableEntityType in modelBuilder.Model.GetEntityTypes())
         {
-            // Setting global query filter for TenantId property
-            Expression<Func<IHasTenantId, bool>> filterExpr = e => e.TenantId == _userContext.TenantId;
-            foreach (var mutableEntityType in modelBuilder.Model.GetEntityTypes())
+            if (mutableEntityType.ClrType.IsAssignableTo(typeof(IHasTenantId)))
             {
-                if (mutableEntityType.ClrType.IsAssignableTo(typeof(IHasTenantId)))
-                {
-                    var parameter = Expression.Parameter(mutableEntityType.ClrType);
-                    var body = ReplacingExpressionVisitor.Replace(filterExpr.Parameters.First(), parameter, filterExpr.Body);
-                    var lambdaExpression = Expression.Lambda(body, parameter);
-                    mutableEntityType.SetQueryFilter(lambdaExpression);
-                }
+                var parameter = Expression.Parameter(mutableEntityType.ClrType);
+                var body = ReplacingExpressionVisitor.Replace(filterExpr.Parameters.First(), parameter, filterExpr.Body);
+                var lambdaExpression = Expression.Lambda(body, parameter);
+                mutableEntityType.SetQueryFilter(lambdaExpression);
             }
-
         }
     }
 }

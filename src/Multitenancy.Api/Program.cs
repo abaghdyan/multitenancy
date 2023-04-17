@@ -1,3 +1,4 @@
+using Multitenancy.Api;
 using Multitenancy.Services;
 
 var builder = WebApplication.CreateBuilder(args);

@@ -1,22 +1,28 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Multitenancy.Data.Tenant.Entities;
-using Plat.Analytics.Data.Tenant;
+using Multitenancy.Data.Master;
+using Multitenancy.Data.Master.Entities;
+using Multitenancy.Services.Abstractions;
 
-namespace Multitenancy.Services.Abstractions
+namespace Multitenancy.Services.Impl;
+
+public class InvoiceService : IInvoiceService
 {
-    public class InvoiceService : IInvoiceService
+    private readonly MasterDbContext _masterDbContext;
+
+    public InvoiceService(MasterDbContext masterDbContext)
     {
-        private readonly TenantDbContext tenantDbContext;
+        _masterDbContext = masterDbContext;
+    }
 
-        public InvoiceService(TenantDbContext tenantDbContext)
-        {
-            this.tenantDbContext = tenantDbContext;
-        }
+    public async Task<List<Invoice>> GetInvoicesAsync()
+    {
+        var invoices = await _masterDbContext.Invoices.ToListAsync();
+        return invoices;
+    }
 
-        public async Task<List<Invoice>> GetInvoices()
-        {
-            var invoices = await tenantDbContext.Invoices.ToListAsync();
-            return invoices;    
-        }
+    public async Task<Invoice?> GetInvoiceByIdAsync(int id)
+    {
+        var invoice = await _masterDbContext.Invoices.FirstOrDefaultAsync(i => i.Id == id);
+        return invoice;
     }
 }

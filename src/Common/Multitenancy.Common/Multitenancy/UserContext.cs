@@ -1,21 +1,20 @@
-﻿namespace Multitenancy.Common.Multitenancy
+﻿namespace Multitenancy.Common.Multitenancy;
+
+public class UserContext
 {
-    public class UserContext
+    public string? TenantId { get; set; }
+    public string? ConnectionString { get; set; }
+    public string UserId { get; set; }
+
+    public void SetTenantInfo(string tenantId, string userId, string connectionString)
     {
-        public string? TenantId { get; set; }
-        public string? ConnectionString { get; set; }
-        public string UserId { get; set; }
+        TenantId = tenantId;
+        UserId = userId;
+        ConnectionString = connectionString;
+    }
 
-        public void SetTenantInfo(string tenantId, string userId, string connectionString)
-        {
-            TenantId = tenantId;
-            UserId = userId;
-            ConnectionString = connectionString;
-        }
-
-        public void SetConnectionString(string connectionString)
-        {
-            ConnectionString = connectionString;
-        }
+    public void SetConnectionString(string connectionString)
+    {
+        ConnectionString = connectionString;
     }
 }
