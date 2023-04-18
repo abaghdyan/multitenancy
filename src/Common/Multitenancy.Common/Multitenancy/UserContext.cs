@@ -4,7 +4,7 @@ public class UserContext
 {
     public string? TenantId { get; set; }
     public string? ConnectionString { get; set; }
-    public string UserId { get; set; }
+    public string UserId { get; set; } = null!;
 
     public void SetTenantInfo(string tenantId, string userId, string connectionString)
     {
