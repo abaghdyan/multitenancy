@@ -36,19 +36,15 @@ public class TenantResolverMiddleware : IMiddleware
         var userIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
         var tenantIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ApplicationClaims.TenantId);
 
-        if (userIdClaim == null)
+        if (!int.TryParse(userIdClaim?.Value, out var userId))
         {
-            throw new ArgumentNullException($"Invalid UserId");
+            throw new Exception("Invalid UserId");
         }
 
-        if (tenantIdClaim == null)
+        if (!int.TryParse(tenantIdClaim?.Value, out var tenantId))
         {
-            throw new ArgumentNullException($"Invalid TenantId");
+            throw new Exception("Invalid TenantId");
         }
-
-        var userId = userIdClaim.Value;
-        var tenantId = tenantIdClaim.Value;
-
 
         var tenant = await _masterDbContext.Tenants
             .Include(t => t.TenantStorage)
@@ -61,7 +57,7 @@ public class TenantResolverMiddleware : IMiddleware
         }
 
         var connectionBuilder = ConnectionHelper.GetConnectionBuilder(_options.EncryptionKey, tenant.TenantStorage);
-        _userContext.SetTenantInfo(tenantIdClaim.Value, userIdClaim.Value, connectionBuilder.ToString());
+        _userContext.SetTenantInfo(tenantId, userId, connectionBuilder.ToString());
 
         await next(context);
     }

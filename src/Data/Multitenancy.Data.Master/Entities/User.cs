@@ -10,7 +10,7 @@ public partial class User : IHasTenantId
     public string Password { get; set; } = null!;
     public string Status { get; set; } = null!;
     public DateTime RegistrationDate { get; set; }
-    public string TenantId { get; set; } = null!;
+    public int TenantId { get; set; }
 
     public virtual Tenant Tenant { get; set; } = null!;
 }

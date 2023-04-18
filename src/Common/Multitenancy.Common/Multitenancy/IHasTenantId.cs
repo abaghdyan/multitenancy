@@ -2,5 +2,5 @@
 
 public interface IHasTenantId
 {
-    public string TenantId { get; set; }
+    public int TenantId { get; set; }
 }

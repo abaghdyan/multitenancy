@@ -2,11 +2,11 @@
 
 public class UserContext
 {
-    public string? TenantId { get; set; }
+    public int? TenantId { get; set; }
     public string? ConnectionString { get; set; }
-    public string UserId { get; set; } = null!;
+    public int UserId { get; set; }
 
-    public void SetTenantInfo(string tenantId, string userId, string connectionString)
+    public void SetTenantInfo(int? tenantId, int userId, string connectionString)
     {
         TenantId = tenantId;
         UserId = userId;
