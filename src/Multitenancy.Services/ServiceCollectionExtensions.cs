@@ -16,9 +16,11 @@ namespace Multitenancy.Services;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddServices(this IServiceCollection services)
+    public static IServiceCollection AddServicesLayer(this IServiceCollection services)
     {
         services.AddScoped<UserContext>();
+        services.AddScoped<ITokenService, TokenService>();
+
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
         services.AddScoped<IBookService, BookService>();
