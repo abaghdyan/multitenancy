@@ -27,7 +27,7 @@ public class TenantResolverMiddleware : IMiddleware
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        var authHeader = context.Request?.Headers["Authorization"].ToString();
+        var authHeader = context.Request?.Headers.Authorization.ToString();
         var token = authHeader?.Replace("Bearer ", string.Empty).Replace("bearer ", string.Empty);
 
         var handler = new JwtSecurityTokenHandler();

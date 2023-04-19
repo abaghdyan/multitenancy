@@ -1,5 +1,8 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Multitenancy.Api.Handlers;
 using Multitenancy.Common.Constants;
 using Multitenancy.Services.Options;
 using System.Security.Cryptography;
@@ -8,6 +11,14 @@ namespace Multitenancy.Api;
 
 public static class ServiceCollectionExtensions
 {
+    public static IServiceCollection ConfigureApplicationOptions(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<AdminAuthOptions>(configuration.GetSection(AdminAuthOptions.Section));
+        services.Configure<MasterDbOptions>(configuration.GetSection(MasterDbOptions.Section));
+
+        return services;
+    }
+
     public static IServiceCollection AddAuthenticationLayer(this IServiceCollection services, IConfiguration configuration)
     {
         var jwtOptions = configuration.GetSection(JwtTokenOptions.Section).Get<JwtTokenOptions>();
@@ -22,8 +33,8 @@ public static class ServiceCollectionExtensions
 
         services.AddAuthentication(options =>
         {
-            options.DefaultScheme = AuthenticationSchemes.Bearer;
-        }).AddJwtBearer(AuthenticationSchemes.Bearer, options =>
+            options.DefaultScheme = ApplicationAuthSchemes.TenantBearer;
+        }).AddJwtBearer(ApplicationAuthSchemes.TenantBearer, options =>
         {
             options.TokenValidationParameters = new TokenValidationParameters
             {
@@ -34,42 +45,73 @@ public static class ServiceCollectionExtensions
                 ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
             };
-        });
+        }).AddScheme<AuthenticationSchemeOptions, AdminAuthenticationHandler>(
+                ApplicationAuthSchemes.AdminFlow, options => { }); ;
 
         return services;
     }
 
+    public static void AddLogging(this WebApplicationBuilder builder, IConfiguration configuration)
+    {
+        builder.Logging.ClearProviders();
+        builder.Host.UseSerilog();
+
+        builder.Logging.ClearProviders();
+
+        builder.Host.UseSerilog((_, sp, lc) =>
+        {
+            lc.Enrich.FromLogContext();
+
+            lc.ReadFrom.Configuration(configuration);
+
+            lc.Filter.ByExcluding(c => c.Properties.Any(p => p.Value.ToString().Contains("swagger") ||
+                    p.Value.ToString().Contains("health")));
+        });
+    }
+
     public static IServiceCollection AddSwaggerLayer(this IServiceCollection services)
     {
-        services.AddSwaggerGen(
-           options =>
-           {
-               options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-               {
-                   Name = "Authorization",
-                   Type = SecuritySchemeType.ApiKey,
-                   BearerFormat = "JWT",
-                   In = ParameterLocation.Header,
-                   Description = "JWT Authorization header using the Bearer scheme."
-               });
-               options.AddSecurityRequirement(new OpenApiSecurityRequirement()
-               {
-                        {
-                            new OpenApiSecurityScheme
-                            {
-                                Reference = new OpenApiReference
-                                {
-                                    Type = ReferenceType.SecurityScheme,
-                                    Id = "Bearer"
-                                },
-                                Scheme = "",
-                                Name = "Bearer",
-                                In = ParameterLocation.Header,
-                            },
-                            new List<string>()
-                        }
-               });
-           });
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Multitenanct", Version = "v1" });
+            c.AddSecurityDefinition("Api Key Auth", new OpenApiSecurityScheme
+            {
+                Description = "ApiKey must appear in header",
+                Type = SecuritySchemeType.ApiKey,
+                Name = ApplicationHeaders.AdminFlowKey,
+                In = ParameterLocation.Header,
+                Scheme = "ApiKeyScheme"
+            });
+            c.AddSecurityDefinition("Bearer Auth", new OpenApiSecurityScheme()
+            {
+                Description = $"JWT Authorization header using the {ApplicationAuthSchemes.TenantBearer} scheme.",
+                Type = SecuritySchemeType.ApiKey,
+                Name = "Authorization",
+                BearerFormat = "JWT",
+                In = ParameterLocation.Header,
+                Scheme = ApplicationAuthSchemes.TenantBearer
+            });
+
+            var requirement = new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Api Key Auth" }
+                    },
+                    new[] { "DemoSwaggerDifferentAuthScheme" }
+                },
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer Auth" }
+                    },
+                    new[] { "DemoSwaggerDifferentAuthScheme" }
+                }
+            };
+
+            c.AddSecurityRequirement(requirement);
+        });
 
         return services;
     }

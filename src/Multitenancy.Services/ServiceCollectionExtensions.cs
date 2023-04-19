@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<UserContext>();
         services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<ITenantAllocator, TenantAllocator>();
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
