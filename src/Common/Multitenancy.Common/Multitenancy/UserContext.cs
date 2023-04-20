@@ -13,6 +13,16 @@ public class UserContext
         ConnectionString = connectionString;
     }
 
+    public int GetRequiredTenantId()
+    {
+        if (TenantId == null)
+        {
+            throw new InvalidOperationException("TenantId was null");
+        }
+
+        return TenantId.Value;
+    }
+
     public void SetConnectionString(string connectionString)
     {
         ConnectionString = connectionString;

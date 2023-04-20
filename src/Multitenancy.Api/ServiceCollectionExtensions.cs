@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Multitenancy.Api.Handlers;
+using Multitenancy.Api.Middlewares;
 using Multitenancy.Common.Constants;
 using Multitenancy.Services.Options;
 using System.Security.Cryptography;
@@ -46,12 +47,14 @@ public static class ServiceCollectionExtensions
                 ClockSkew = TimeSpan.Zero
             };
         }).AddScheme<AuthenticationSchemeOptions, AdminAuthenticationHandler>(
-                ApplicationAuthSchemes.AdminFlow, options => { }); ;
+                ApplicationAuthSchemes.AdminFlow, options => { });
+
+        services.AddTransient<TenantResolverMiddleware>();
 
         return services;
     }
 
-    public static void AddLogging(this WebApplicationBuilder builder, IConfiguration configuration)
+    public static WebApplicationBuilder AddLogging(this WebApplicationBuilder builder, IConfiguration configuration)
     {
         builder.Logging.ClearProviders();
         builder.Host.UseSerilog();
@@ -67,6 +70,8 @@ public static class ServiceCollectionExtensions
             lc.Filter.ByExcluding(c => c.Properties.Any(p => p.Value.ToString().Contains("swagger") ||
                     p.Value.ToString().Contains("health")));
         });
+
+        return builder;
     }
 
     public static IServiceCollection AddSwaggerLayer(this IServiceCollection services)

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Multitenancy.Common.Constants;
 using Multitenancy.Common.Multitenancy;
@@ -27,6 +28,15 @@ public class TenantResolverMiddleware : IMiddleware
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
+        var authenticateResultFeature = context.Features.Get<IAuthenticateResultFeature>();
+        var authenticationTicket = authenticateResultFeature?.AuthenticateResult?.Ticket;
+
+        if (authenticationTicket?.AuthenticationScheme != ApplicationAuthSchemes.TenantBearer)
+        {
+            await next(context);
+            return;
+        }
+
         var authHeader = context.Request?.Headers.Authorization.ToString();
         var token = authHeader?.Replace("Bearer ", string.Empty).Replace("bearer ", string.Empty);
 

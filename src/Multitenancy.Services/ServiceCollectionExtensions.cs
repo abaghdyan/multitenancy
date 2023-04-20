@@ -19,7 +19,7 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddServicesLayer(this IServiceCollection services)
     {
         services.AddScoped<UserContext>();
-        services.AddScoped<ITokenService, TokenService>();
+        services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITenantAllocator, TenantAllocator>();
 
         services.AddScoped<IUserService, UserService>();

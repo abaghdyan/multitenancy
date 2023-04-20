@@ -1,4 +1,5 @@
 using Multitenancy.Api;
+using Multitenancy.Api.Middlewares;
 using Multitenancy.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -32,6 +33,7 @@ app.UseHttpsRedirection();
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseMiddleware<TenantResolverMiddleware>();
 
 app.MapControllers();
 

@@ -31,7 +31,7 @@ public class TenantAllocator : ITenantAllocator
     {
         var connectionParams = "{\"MaxPoolSize\": \"100\",\r\n \"MinPoolSize\": \"1\",\r\n \"Pooling\": \"True\",\r\n \"LoadBalanceTimeout\": \"30\",\r\n \"ConnectTimeout\": \"30\",\r\n \"TrustServerCertificate\": \"False\",\r\n \"Encrypt\": \"False\",\r\n \"MultipleActiveResultSets\": \"False\",\r\n \"PersistSecurityInfo\": \"False\"}";
 
-        using var masterTransaction = await _masterDbContext.Database.BeginTransactionAsync();
+        using var masterDbTransaction = await _masterDbContext.Database.BeginTransactionAsync();
 
         var firstStorage = new TenantStorage
         {
@@ -119,7 +119,6 @@ public class TenantAllocator : ITenantAllocator
             await newTenantDbContext.SaveChangesAsync();
         }
 
-        await masterTransaction.CommitAsync();
+        await masterDbTransaction.CommitAsync();
     }
-
 }

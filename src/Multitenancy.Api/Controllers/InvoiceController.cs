@@ -3,6 +3,7 @@ using Multitenancy.Api.Controllers.Base;
 using Multitenancy.Common.Multitenancy;
 using Multitenancy.Data.Master.Entities;
 using Multitenancy.Services.Abstractions;
+using Multitenancy.Services.Models;
 
 namespace Multitenancy.Api.Controllers;
 
@@ -30,5 +31,12 @@ public class InvoiceController : TenantBaseController
     {
         var invoice = await _invoiceService.GetInvoiceByIdAsync(invoiceId);
         return Ok(invoice);
+    }
+
+    [HttpPost("addInvoice")]
+    public async Task<ActionResult<Invoice>> AddInvoice(InvoiceInputModel invoiceInputModel)
+    {
+        await _invoiceService.AddInvoiceAsync(invoiceInputModel);
+        return Ok();
     }
 }
