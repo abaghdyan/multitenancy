@@ -65,12 +65,11 @@ public static class ServiceCollectionExtensions
     public static WebApplicationBuilder AddLogging(this WebApplicationBuilder builder, IConfiguration configuration)
     {
         builder.Logging.ClearProviders();
-        builder.Host.UseSerilog();
-
-        builder.Logging.ClearProviders();
 
         builder.Host.UseSerilog((_, sp, lc) =>
         {
+            lc.WriteTo.Console();
+
             lc.Enrich.FromLogContext();
 
             lc.ReadFrom.Configuration(configuration);
