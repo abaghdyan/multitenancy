@@ -1,4 +1,4 @@
-﻿namespace Multitenancy.Services.Options;
+﻿namespace Multitenancy.Api.Options;
 
 public class JwtTokenOptions
 {

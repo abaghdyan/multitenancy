@@ -4,6 +4,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Multitenancy.Api.Handlers;
 using Multitenancy.Api.Middlewares;
+using Multitenancy.Api.Options;
 using Multitenancy.Common.Constants;
 using Multitenancy.Services.Options;
 using System.Security.Cryptography;

@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Multitenancy.Api.Options;
 using Multitenancy.Common.Constants;
-using Multitenancy.Services.Options;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 

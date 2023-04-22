@@ -34,14 +34,14 @@ public class AuthenticationService : IAuthenticationService
     public string GenerateAccessToken(User user)
     {
         var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ApplicationClaims.UserId, user.Id.ToString()),
-                new Claim(ApplicationClaims.TenantId, user.TenantId.ToString())
-            };
+        {
+            new Claim(ClaimTypes.Name, user.Email),
+            new Claim(ApplicationClaims.UserId, user.Id.ToString()),
+            new Claim(ApplicationClaims.TenantId, user.TenantId.ToString())
+        };
 
         var jwtToken = new JwtSecurityToken(issuer: "Multitenancy",
-                                            audience: "Anyone",
+                                            audience: "Multitenancy",
                                             claims: claims,
                                             notBefore: DateTime.UtcNow,
                                             expires: DateTime.UtcNow.AddMinutes(90),
