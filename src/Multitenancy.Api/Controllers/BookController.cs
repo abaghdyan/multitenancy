@@ -36,7 +36,7 @@ public class BookController : TenantBaseController
     }
 
     [HttpPost("addBook")]
-    public async Task<ActionResult<Invoice>> AddInvoice(BookInputModel bookInputModel)
+    public async Task<ActionResult<Invoice>> AddBook(BookInputModel bookInputModel)
     {
         await _bookService.AddBookAsync(bookInputModel);
         return Ok();

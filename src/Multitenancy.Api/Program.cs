@@ -11,6 +11,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerLayer();
 
+builder.Services.AddMiddlewares();
 builder.Services.ConfigureApplicationOptions(configuration);
 builder.Services.AddDbContexts(configuration);
 builder.Services.AddServicesLayer();

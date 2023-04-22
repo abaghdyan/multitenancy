@@ -43,6 +43,5 @@ public class BookService : IBookService
 
         _tenantDbContext.Books.Add(book);
         await _tenantDbContext.SaveChangesAsync();
-
     }
 }

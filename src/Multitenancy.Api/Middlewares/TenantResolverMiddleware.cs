@@ -43,7 +43,7 @@ public class TenantResolverMiddleware : IMiddleware
         var handler = new JwtSecurityTokenHandler();
         var jwtSecurityToken = handler.ReadJwtToken(token);
 
-        var userIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+        var userIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ApplicationClaims.UserId);
         var tenantIdClaim = jwtSecurityToken.Claims.FirstOrDefault(c => c.Type == ApplicationClaims.TenantId);
 
         if (!int.TryParse(userIdClaim?.Value, out var userId))

@@ -12,6 +12,15 @@ namespace Multitenancy.Api;
 
 public static class ServiceCollectionExtensions
 {
+
+    public static IServiceCollection AddMiddlewares(this IServiceCollection services)
+    {
+        services.AddTransient<GlobalExceptionHandler>();
+        services.AddTransient<TenantResolverMiddleware>();
+
+        return services;
+    }
+
     public static IServiceCollection ConfigureApplicationOptions(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<AdminAuthOptions>(configuration.GetSection(AdminAuthOptions.Section));
@@ -48,8 +57,6 @@ public static class ServiceCollectionExtensions
             };
         }).AddScheme<AuthenticationSchemeOptions, AdminAuthenticationHandler>(
                 ApplicationAuthSchemes.AdminFlow, options => { });
-
-        services.AddTransient<TenantResolverMiddleware>();
 
         return services;
     }
