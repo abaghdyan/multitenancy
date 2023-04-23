@@ -21,17 +21,6 @@ public partial class TenantDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (!optionsBuilder.IsConfigured)
-        {
-            if (!string.IsNullOrEmpty(_userContext.ConnectionString))
-            {
-                optionsBuilder.UseSqlServer(_userContext.ConnectionString);
-            }
-            else
-            {
-                throw new InvalidOperationException("Tenant related database connection string was not initialized");
-            }
-        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
