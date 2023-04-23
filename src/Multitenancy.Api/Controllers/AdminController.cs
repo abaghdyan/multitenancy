@@ -5,7 +5,7 @@ using Multitenancy.Services.Abstractions;
 namespace Multitenancy.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/v1/[controller]")]
 public class AdminController : MasterBaseController
 {
     private readonly ITenantAllocator _tenantAllocator;

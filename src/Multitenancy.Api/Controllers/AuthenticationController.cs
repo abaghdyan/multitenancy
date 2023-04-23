@@ -8,7 +8,7 @@ using Multitenancy.Services.Models;
 namespace Multitenancy.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/v1/[controller]")]
 public class AuthenticationController : TenantBaseController
 {
     private readonly IAuthenticationService _authService;

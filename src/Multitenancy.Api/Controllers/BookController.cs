@@ -9,7 +9,7 @@ using Multitenancy.Services.Models;
 namespace Multitenancy.Api.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/v1/[controller]")]
 public class BookController : TenantBaseController
 {
     private readonly IBookService _bookService;
@@ -24,8 +24,16 @@ public class BookController : TenantBaseController
     [HttpGet]
     public async Task<ActionResult<List<Book>>> GetBooks()
     {
-        var books = await _bookService.GetBooksAsync();
-        return Ok(books);
+        try
+        {
+            var books = await _bookService.GetBooksAsync();
+            return Ok(books);
+        }
+        catch (Exception ex)
+        {
+
+            throw;
+        }
     }
 
     [HttpGet("{bookId}")]

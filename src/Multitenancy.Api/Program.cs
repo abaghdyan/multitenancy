@@ -39,3 +39,5 @@ app.UseMiddleware<TenantResolverMiddleware>();
 app.MapControllers();
 
 app.Run();
+
+public partial class Program { }
