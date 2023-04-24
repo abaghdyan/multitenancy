@@ -20,11 +20,13 @@ public static class ServiceCollectionExtensions
     {
         services.AddScoped<UserContext>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
-        services.AddScoped<ITenantAllocator, TenantAllocator>();
+        services.AddScoped<ITenantService, TenantService>();
 
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
         services.AddScoped<IBookService, BookService>();
+
+        services.AddScoped<IDataTransferService, DataTransferService>();
 
         return services;
     }

@@ -6,13 +6,14 @@ using Multitenancy.Data.Master;
 using Multitenancy.Data.Master.Entities;
 using Multitenancy.Data.Master.Helpers;
 using Multitenancy.Data.Tenant;
+using Multitenancy.Services.Abstractions;
 using Multitenancy.Services.Options;
 using Serilog;
 using System.Diagnostics;
 
 namespace Multitenancy.Services.Impl;
 
-public class DataTransferService
+public class DataTransferService : IDataTransferService
 {
     private Tenant _tenant = null!;
 
@@ -35,7 +36,7 @@ public class DataTransferService
         _oldDbContext = tenantDbContext;
     }
 
-    public async Task TransferDataFromOldToNew(long tenantId, int newStorageId)
+    public async Task TransferDataAsync(int tenantId, int newStorageId)
     {
         _logger.Information($"Tenant with {tenantId} Id requested to transfer Data from Old to New storage.");
         var stopwatch = Stopwatch.StartNew();
@@ -47,6 +48,11 @@ public class DataTransferService
         if (_tenant == null)
         {
             throw new Exception($"Tenant with id {tenantId} not found");
+        }
+
+        if (_tenant.TenantStorageId == newStorageId)
+        {
+            throw new Exception($"Tenant is already in storage with {_tenant.TenantStorageId} Id");
         }
 
         _oldDbContext.Database.SetCommandTimeout(TimeSpan.FromSeconds(120));
@@ -71,12 +77,11 @@ public class DataTransferService
     {
         _logger.Information($"Data transfering from Old to New storage started for Tenant with {_tenant.Id} Id.");
 
-        //Transfer data to New Storage
         var newStorage = await _masterDbContext.TenantStorages.FirstOrDefaultAsync(ts => ts.Id == newStorageId);
 
         if (newStorage == null)
         {
-            throw new Exception($"{nameof(TenantStorage)} with {newStorageId} was not found");
+            throw new Exception($"Storage with {newStorageId} was not found");
         }
 
         using (var scope = _serviceProvider.CreateScope())
@@ -89,9 +94,14 @@ public class DataTransferService
             newTenantDbContext.Database.SetCommandTimeout(TimeSpan.FromSeconds(120));
             using var newTenantDbTransaction = await newTenantDbContext.Database.BeginTransactionAsync();
 
-            var requiredEntities = await GetRequiredEntities();
+            var requiredEntities = await GetRequiredEntitiesAsync();
 
             RemoveAllPrimaryKeys(requiredEntities);
+
+            foreach (var requiredEntity in requiredEntities)
+            {
+                newTenantDbContext.AddRange(requiredEntity);
+            }
 
             await newTenantDbContext.SaveChangesAsync();
 
@@ -135,7 +145,7 @@ public class DataTransferService
 
         using var sourceTransaction = await _oldDbContext.Database.BeginTransactionAsync();
 
-        var requiredEntities = await GetRequiredEntities();
+        var requiredEntities = await GetRequiredEntitiesAsync();
 
         foreach (var requiredEntity in requiredEntities)
         {
@@ -156,17 +166,19 @@ public class DataTransferService
         _logger.Information($"Data deletion from Old storage for Tenant with {_tenant.Id} Id finished successfully.");
     }
 
-    private async Task<List<IEnumerable<IHasTenantId>>> GetRequiredEntities()
+    private async Task<List<IEnumerable<IHasTenantId>>> GetRequiredEntitiesAsync()
     {
         var list = new List<IEnumerable<IHasTenantId>>();
         _oldDbContext.ChangeTracker.Clear();
 
-        var allEntities = _oldDbContext.ChangeTracker.Entries();
+        var allEntities = _oldDbContext.Model.GetEntityTypes();
 
         foreach (var entity in allEntities)
         {
-            IEnumerable<IHasTenantId> entities = await _oldDbContext.Books.ToListAsync();
-            list.Add(entities);
+            if (entity.ClrType.IsAssignableTo(typeof(IHasTenantId)))
+            {
+                //var aaa = await _oldDbContext.FromExpression<IHasTenantId>(a => true).ToListAsync();
+            }
         }
 
         return list;
@@ -174,5 +186,19 @@ public class DataTransferService
 
     private void RemoveAllPrimaryKeys(List<IEnumerable<IHasTenantId>> entities)
     {
+    }
+}
+
+public static class Ext
+{
+    public static IQueryable<object> Set(this DbContext context, Type T)
+    {
+        var method = typeof(DbContext).GetMethods().Single(p =>
+            p.Name == nameof(DbContext.Set) && p.ContainsGenericParameters && !p.GetParameters().Any());
+
+        // Build a method with the specific type argument you're interested in
+        method = method.MakeGenericMethod(T);
+
+        return method.Invoke(context, null) as IQueryable<object>;
     }
 }

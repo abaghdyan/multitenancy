@@ -12,17 +12,20 @@ using Multitenancy.Services.Options;
 
 namespace Multitenancy.Services.Impl;
 
-public class TenantAllocator : ITenantAllocator
+public class TenantService : ITenantService
 {
+    private readonly UserContext _userContext;
     private readonly MasterDbOptions _options;
     private readonly MasterDbContext _masterDbContext;
     private readonly IServiceProvider _serviceProvider;
 
-    public TenantAllocator(MasterDbContext masterDbContext,
+    public TenantService(UserContext userContext,
+        MasterDbContext masterDbContext,
         IServiceProvider serviceProvider,
         IOptions<MasterDbOptions> options)
     {
         _options = options.Value;
+        _userContext = userContext;
         _masterDbContext = masterDbContext;
         _serviceProvider = serviceProvider;
     }
@@ -120,5 +123,23 @@ public class TenantAllocator : ITenantAllocator
         }
 
         await masterDbTransaction.CommitAsync();
+    }
+
+    public async Task<Tenant> InitializeTenantForScopeAsync(int tenantId)
+    {
+        var tenant = await _masterDbContext.Tenants
+            .Include(t => t.TenantStorage)
+            .Where(t => t.Id == tenantId)
+            .FirstOrDefaultAsync();
+
+        if (tenant == null)
+        {
+            throw new ArgumentNullException($"Tenant with {tenantId} Id was not found.");
+        }
+
+        var connectionBuilder = ConnectionHelper.GetConnectionBuilder(_options.EncryptionKey, tenant.TenantStorage);
+        _userContext.SetTenantInfo(tenantId, null,  connectionBuilder.ToString());
+        
+        return tenant;
     }
 }

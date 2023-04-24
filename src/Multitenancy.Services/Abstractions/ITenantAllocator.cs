@@ -1,6 +1,9 @@
-﻿namespace Multitenancy.Services.Abstractions;
+﻿using Multitenancy.Data.Master.Entities;
 
-public interface ITenantAllocator
+namespace Multitenancy.Services.Abstractions;
+
+public interface ITenantService
 {
     Task CreateDemoTenantsAsync();
+    Task<Tenant> InitializeTenantForScopeAsync(int tenantId);
 }
