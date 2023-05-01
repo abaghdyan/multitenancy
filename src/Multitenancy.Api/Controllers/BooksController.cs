@@ -10,11 +10,11 @@ namespace Multitenancy.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class BookController : TenantBaseController
+public class BooksController : TenantBaseController
 {
     private readonly IBookService _bookService;
 
-    public BookController(UserContext userContext,
+    public BooksController(UserContext userContext,
         IBookService bookService)
         : base(userContext)
     {

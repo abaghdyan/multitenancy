@@ -9,10 +9,10 @@ namespace Multitenancy.Api.Controllers;
 
 [ApiController]
 [Route("api/v1/[controller]")]
-public class InvoiceController : TenantBaseController
+public class InvoicesController : TenantBaseController
 {
     private readonly IInvoiceService _invoiceService;
-    public InvoiceController(UserContext userContext,
+    public InvoicesController(UserContext userContext,
         IInvoiceService invoiceService)
         : base(userContext)
     {

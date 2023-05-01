@@ -2,6 +2,8 @@ using Multitenancy.Api;
 using Multitenancy.Api.Middlewares;
 using Multitenancy.Services;
 
+var MyAllowSpecificOrigins = "MultitenancyOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
@@ -17,6 +19,18 @@ builder.Services.AddDbContexts(configuration);
 builder.Services.AddServicesLayer();
 builder.Services.AddAuthenticationLayer(configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.AllowAnyHeader();
+                          policy.AllowAnyMethod();
+                          policy.AllowAnyOrigin();
+                          //policy.AllowCredentials();
+                      });
+});
+
 var app = builder.Build();
 
 await app.Services.MigrateMasterDbContextAsync();
@@ -30,7 +44,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<GlobalExceptionHandler>();
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
+
+app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthentication();
 app.UseAuthorization();

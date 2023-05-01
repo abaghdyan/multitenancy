@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Multitenancy.Api.Controllers.Base;
+using Multitenancy.Api.Models;
 using Multitenancy.Common.Multitenancy;
 using Multitenancy.Services.Abstractions;
 using Multitenancy.Services.Models;
@@ -37,6 +38,6 @@ public class AuthenticationController : TenantBaseController
         }
 
         var token = _authService.GenerateAccessToken(user);
-        return Ok(token);
+        return Ok(new AccessTokenVm { AccessToken = token });
     }
 }
