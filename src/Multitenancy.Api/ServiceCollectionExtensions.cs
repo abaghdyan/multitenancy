@@ -13,7 +13,6 @@ namespace Multitenancy.Api;
 
 public static class ServiceCollectionExtensions
 {
-
     public static IServiceCollection AddMiddlewares(this IServiceCollection services)
     {
         services.AddTransient<GlobalExceptionHandler>();
