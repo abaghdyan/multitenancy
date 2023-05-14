@@ -84,7 +84,7 @@ public static class ServiceCollectionExtensions
     {
         services.AddSwaggerGen(c =>
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Multitenanct", Version = "v1" });
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "Multitenancy", Version = "v1" });
             c.AddSecurityDefinition("Api Key Auth", new OpenApiSecurityScheme
             {
                 Description = "ApiKey must appear in header",
