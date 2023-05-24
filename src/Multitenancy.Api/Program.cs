@@ -27,7 +27,6 @@ builder.Services.AddCors(options =>
                           policy.AllowAnyHeader();
                           policy.AllowAnyMethod();
                           policy.AllowAnyOrigin();
-                          //policy.AllowCredentials();
                       });
 });
 
@@ -44,7 +43,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseMiddleware<GlobalExceptionHandler>();
 
-//app.UseHttpsRedirection();
+app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
 
