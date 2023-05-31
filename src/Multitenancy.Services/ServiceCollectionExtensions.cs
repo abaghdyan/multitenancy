@@ -6,6 +6,7 @@ using Multitenancy.Common.Multitenancy;
 using Multitenancy.Data.Master;
 using Multitenancy.Data.Master.Helpers;
 using Multitenancy.Data.Tenant;
+using Multitenancy.Data.Tenant.Services;
 using Multitenancy.Services.Abstractions;
 using Multitenancy.Services.Impl;
 using Multitenancy.Services.Options;
@@ -21,10 +22,10 @@ public static class ServiceCollectionExtensions
         services.AddScoped<UserContext>();
         services.AddScoped<IAuthenticationService, AuthenticationService>();
         services.AddScoped<ITenantService, TenantService>();
-
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IInvoiceService, InvoiceService>();
         services.AddScoped<IBookService, BookService>();
+        services.AddScoped<ITenantDbHelper, TenantDbHelper>();
 
         return services;
     }

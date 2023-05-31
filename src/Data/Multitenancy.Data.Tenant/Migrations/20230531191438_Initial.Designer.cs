@@ -11,7 +11,7 @@ using Multitenancy.Data.Tenant;
 namespace Multitenancy.Data.Tenant.Migrations
 {
     [DbContext(typeof(TenantDbContext))]
-    [Migration("20230418195226_Initial")]
+    [Migration("20230531191438_Initial")]
     partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -26,10 +26,10 @@ namespace Multitenancy.Data.Tenant.Migrations
             modelBuilder.Entity("Multitenancy.Data.Tenant.Entities.Book", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Author")
                         .IsRequired()
@@ -42,10 +42,7 @@ namespace Multitenancy.Data.Tenant.Migrations
                     b.Property<int>("PageCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("Id", "TenantId");
 
                     b.ToTable("Books");
                 });
