@@ -7,7 +7,6 @@ using Multitenancy.Data.Master;
 using Multitenancy.Data.Master.Helpers;
 using Multitenancy.Services.Options;
 using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
 
 namespace Multitenancy.Api.Middlewares;
 

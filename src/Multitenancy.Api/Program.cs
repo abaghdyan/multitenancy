@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 var configuration = builder.Configuration;
 
 builder.AddLogging(configuration);
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddControllersAsServices();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerLayer();

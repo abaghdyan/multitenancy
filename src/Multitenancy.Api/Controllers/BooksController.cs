@@ -24,16 +24,8 @@ public class BooksController : TenantBaseController
     [HttpGet]
     public async Task<ActionResult<List<Book>>> GetBooks()
     {
-        try
-        {
-            var books = await _bookService.GetBooksAsync();
-            return Ok(books);
-        }
-        catch (Exception ex)
-        {
-
-            throw;
-        }
+        var books = await _bookService.GetBooksAsync();
+        return Ok(books);
     }
 
     [HttpGet("{bookId}")]

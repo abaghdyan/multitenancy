@@ -8,12 +8,12 @@ namespace Multitenancy.Data.Master.Helpers;
 
 public static class ConnectionHelper
 {
-    public static SqlConnectionStringBuilder GetConnectionBuilder(string key, TenantStorage connectionInfo)
+    public static SqlConnectionStringBuilder GetConnectionBuilder(string key, TenantStorage tenantStorage)
     {
-        var dataSource = SecurityHelper.Decrypt(key, connectionInfo.Server);
-        var initialCatalog = SecurityHelper.Decrypt(key, connectionInfo.Database);
-        var userId = string.IsNullOrWhiteSpace(connectionInfo.Username) ? "" : SecurityHelper.Decrypt(key, connectionInfo.Username);
-        var password = string.IsNullOrWhiteSpace(connectionInfo.Password) ? "" : SecurityHelper.Decrypt(key, connectionInfo.Password);
+        var dataSource = SecurityHelper.Decrypt(key, tenantStorage.Server);
+        var initialCatalog = SecurityHelper.Decrypt(key, tenantStorage.Database);
+        var userId = string.IsNullOrWhiteSpace(tenantStorage.Username) ? "" : SecurityHelper.Decrypt(key, tenantStorage.Username);
+        var password = string.IsNullOrWhiteSpace(tenantStorage.Password) ? "" : SecurityHelper.Decrypt(key, tenantStorage.Password);
 
         var connectionBuilder = new SqlConnectionStringBuilder
         {
@@ -23,9 +23,9 @@ public static class ConnectionHelper
             Password = password
         };
 
-        if (connectionInfo.ConnectionParameters != null)
+        if (tenantStorage.ConnectionParameters != null)
         {
-            var parameters = JsonConvert.DeserializeObject<TenantStorageConnectionParameter>(connectionInfo.ConnectionParameters);
+            var parameters = JsonConvert.DeserializeObject<TenantStorageConnectionParameter>(tenantStorage.ConnectionParameters);
             connectionBuilder.PersistSecurityInfo = parameters.PersistSecurityInfo ?? connectionBuilder.PersistSecurityInfo;
             connectionBuilder.MultipleActiveResultSets = parameters.MultipleActiveResultSets ?? connectionBuilder.MultipleActiveResultSets;
             connectionBuilder.Encrypt = parameters.Encrypt ?? connectionBuilder.Encrypt;

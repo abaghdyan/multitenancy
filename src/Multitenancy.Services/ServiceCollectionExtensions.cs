@@ -26,24 +26,22 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IInvoiceService, InvoiceService>();
         services.AddScoped<IBookService, BookService>();
 
-        services.AddScoped<IDataTransferService, DataTransferService>();
-
         return services;
     }
 
     public static IServiceCollection AddDbContexts(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetSection(MasterDbOptions.Section).Get<MasterDbOptions>().ConnectionString;
+        var masterConnectionString = configuration.GetSection(MasterDbOptions.Section).Get<MasterDbOptions>().ConnectionString;
 
         services.AddDbContext<MasterDbContext>(options =>
-            options.UseSqlServer(connectionString));
+            options.UseSqlServer(masterConnectionString));
 
         services.AddDbContext<TenantDbContext>((provider, cfg) =>
         {
-            var currentScopeInfo = provider.GetRequiredService<UserContext>();
-            if (!string.IsNullOrEmpty(currentScopeInfo.ConnectionString))
+            var userContext = provider.GetRequiredService<UserContext>();
+            if (!string.IsNullOrEmpty(userContext.ConnectionString))
             {
-                cfg.UseSqlServer(currentScopeInfo.ConnectionString);
+                cfg.UseSqlServer(userContext.ConnectionString);
             }
         });
 
@@ -77,6 +75,7 @@ public static class ServiceCollectionExtensions
     {
         using var serviceScope = provider.CreateScope();
         var masterDbContext = serviceScope.ServiceProvider.GetRequiredService<MasterDbContext>();
+        var options = provider.GetRequiredService<IOptions<MasterDbOptions>>();
         var logger = serviceScope.ServiceProvider.GetRequiredService<ILogger>().ForContext<TenantDbContext>();
         var migrationTime = new Stopwatch();
         logger.Information("All tenant storages migration started");
@@ -89,7 +88,6 @@ public static class ServiceCollectionExtensions
                 using var scope = provider.CreateScope();
                 var serviceProvider = scope.ServiceProvider;
 
-                var options = serviceProvider.GetRequiredService<IOptions<MasterDbOptions>>();
                 var userContext = serviceProvider.GetRequiredService<UserContext>();
 
                 var connectionBuilder = ConnectionHelper.GetConnectionBuilder(options.Value.EncryptionKey, tenantStorage);
