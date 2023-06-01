@@ -25,10 +25,10 @@ namespace Multitenancy.Data.Master.Migrations
             modelBuilder.Entity("Multitenancy.Data.Master.Entities.Invoice", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.Property<int>("TenantId")
+                        .HasColumnType("int");
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
@@ -36,10 +36,7 @@ namespace Multitenancy.Data.Master.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("Id", "TenantId");
 
                     b.ToTable("Invoices");
                 });

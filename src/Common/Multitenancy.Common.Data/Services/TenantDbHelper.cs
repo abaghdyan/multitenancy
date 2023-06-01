@@ -1,6 +1,6 @@
-﻿using Multitenancy.Data.Tenant.Entities;
+﻿using Multitenancy.Common.Data.Entities;
 
-namespace Multitenancy.Data.Tenant.Services;
+namespace Multitenancy.Common.Data.Services;
 
 public class TenantDbHelper : ITenantDbHelper
 {

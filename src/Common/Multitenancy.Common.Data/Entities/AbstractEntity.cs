@@ -1,4 +1,4 @@
-﻿namespace Multitenancy.Data.Tenant.Entities;
+﻿namespace Multitenancy.Common.Data.Entities;
 
 public class AbstractEntity
 {

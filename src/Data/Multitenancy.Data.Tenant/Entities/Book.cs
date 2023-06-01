@@ -1,4 +1,5 @@
-﻿using Multitenancy.Common.Multitenancy;
+﻿using Multitenancy.Common.Data.Entities;
+using Multitenancy.Common.Multitenancy;
 
 namespace Multitenancy.Data.Tenant.Entities;
 

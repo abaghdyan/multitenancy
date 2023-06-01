@@ -1,8 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Multitenancy.Common.Data.Entities;
+using Multitenancy.Common.Data.Services;
 using Multitenancy.Common.Multitenancy;
 using Multitenancy.Data.Tenant.Entities;
-using Multitenancy.Data.Tenant.Services;
 using System.Linq.Expressions;
 
 namespace Multitenancy.Data.Tenant;

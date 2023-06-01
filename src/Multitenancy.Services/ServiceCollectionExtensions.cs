@@ -2,11 +2,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Multitenancy.Common.Data.Services;
 using Multitenancy.Common.Multitenancy;
 using Multitenancy.Data.Master;
 using Multitenancy.Data.Master.Helpers;
 using Multitenancy.Data.Tenant;
-using Multitenancy.Data.Tenant.Services;
 using Multitenancy.Services.Abstractions;
 using Multitenancy.Services.Impl;
 using Multitenancy.Services.Options;

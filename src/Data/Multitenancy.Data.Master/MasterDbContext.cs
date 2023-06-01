@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using Multitenancy.Common.Data.Entities;
+using Multitenancy.Common.Data.Services;
 using Multitenancy.Common.Multitenancy;
 using Multitenancy.Data.Master.Entities;
 using System.Linq.Expressions;
@@ -9,18 +11,47 @@ namespace Multitenancy.Data.Master;
 public partial class MasterDbContext : DbContext
 {
     private readonly UserContext _userContext;
+    private readonly ITenantDbHelper _tenantDbHelper;
 
     public MasterDbContext(DbContextOptions<MasterDbContext> options,
-        UserContext userContext)
+        UserContext userContext,
+        ITenantDbHelper tenantDbHelper)
         : base(options)
     {
         _userContext = userContext;
+        _tenantDbHelper = tenantDbHelper;
     }
 
     public virtual DbSet<Tenant> Tenants { get; set; } = null!;
     public virtual DbSet<TenantStorage> TenantStorages { get; set; } = null!;
     public virtual DbSet<User> Users { get; set; } = null!;
     public virtual DbSet<Invoice> Invoices { get; set; } = null!;
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        var addedEntities = ChangeTracker
+                .Entries()
+                .Where(p => p.State == EntityState.Added)
+                .ToList();
+
+        foreach (var addedEntity in addedEntities)
+        {
+            var abstractEntity = addedEntity.Entity as AbstractEntity;
+            if (abstractEntity != null)
+            {
+                abstractEntity.Id = _tenantDbHelper.GenerateUniqueId(abstractEntity);
+            }
+        }
+
+        try
+        {
+            return await base.SaveChangesAsync(cancellationToken);
+        }
+        catch (Exception)
+        {
+            throw;
+        }
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -49,6 +80,11 @@ public partial class MasterDbContext : DbContext
             entity.HasOne(d => d.Tenant)
                 .WithMany(p => p.Users)
                 .HasForeignKey(d => d.TenantId);
+        });
+
+        modelBuilder.Entity<Invoice>(entity =>
+        {
+            entity.HasKey(x => new { x.Id, x.TenantId });
         });
     }
 }

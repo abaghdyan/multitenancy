@@ -1,10 +1,10 @@
-﻿using Multitenancy.Common.Multitenancy;
+﻿using Multitenancy.Common.Data.Entities;
+using Multitenancy.Common.Multitenancy;
 
 namespace Multitenancy.Data.Master.Entities;
 
-public class Invoice : IHasTenantId
+public class Invoice : AbstractEntity, IHasTenantId
 {
-    public int Id { get; set; }
     public int TenantId { get; set; }
     public DateTime Date { get; set; }
     public int Amount { get; set; }
