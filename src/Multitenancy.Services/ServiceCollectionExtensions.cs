@@ -27,6 +27,9 @@ public static class ServiceCollectionExtensions
         services.AddScoped<IBookService, BookService>();
         services.AddScoped<ITenantDbHelper, TenantDbHelper>();
 
+        services.AddScoped<IPlanLimitationService, PlanLimitationService>();
+        services.AddSingleton<CacheConnector>();
+
         return services;
     }
 

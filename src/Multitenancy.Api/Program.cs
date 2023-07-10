@@ -16,6 +16,7 @@ builder.Services.AddSwaggerLayer();
 builder.Services.AddMiddlewares();
 builder.Services.ConfigureApplicationOptions(configuration);
 builder.Services.AddDbContexts(configuration);
+builder.Services.AddRedis(configuration);
 builder.Services.AddServicesLayer();
 builder.Services.AddAuthenticationLayer(configuration);
 
@@ -50,6 +51,7 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<TenantResolverMiddleware>();
+app.UseMiddleware<RateLimitMiddleware>();
 
 app.MapControllers();
 

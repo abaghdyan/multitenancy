@@ -7,6 +7,7 @@ using Multitenancy.Api.Middlewares;
 using Multitenancy.Api.Options;
 using Multitenancy.Common.Constants;
 using Multitenancy.Services.Options;
+using StackExchange.Redis;
 using System.Security.Cryptography;
 
 namespace Multitenancy.Api;
@@ -17,6 +18,21 @@ public static class ServiceCollectionExtensions
     {
         services.AddTransient<GlobalExceptionHandler>();
         services.AddTransient<TenantResolverMiddleware>();
+        services.AddTransient<RateLimitMiddleware>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddRedis(this IServiceCollection services, IConfiguration configuration)
+    {
+        var redisOptions = configuration.GetSection(RedisOptions.Section).Get<RedisOptions>();
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = redisOptions.ConnectionString;
+        });
+
+        services.AddSingleton<IConnectionMultiplexer>(_
+            => ConnectionMultiplexer.Connect(redisOptions.ConnectionString));
 
         return services;
     }
@@ -25,6 +41,7 @@ public static class ServiceCollectionExtensions
     {
         services.Configure<AdminAuthOptions>(configuration.GetSection(AdminAuthOptions.Section));
         services.Configure<MasterDbOptions>(configuration.GetSection(MasterDbOptions.Section));
+        services.Configure<RedisOptions>(configuration.GetSection(RedisOptions.Section));
 
         return services;
     }
